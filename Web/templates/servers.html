@@ -1,0 +1,48 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/fixes.html" as fixes %}
+
+{% block content %}
+<div class="container">
+  <h1>Cloud.Testlab</h1> Last update: {% if servers %} {{ servers[0].update_time }} {% endif %}
+
+  <table class="table">
+      <thead>
+          <tr>
+            <th>Hostname</th>
+            <th>MAC</th>
+            <th>Product name</th>
+            <th>Uptime</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if servers %}
+              {% for server in servers %}
+              <tr>
+                {%  if server['online'] == true %}
+                    <td><span class="label label-success">{{ server['hostname'] }} ({{ server['server'] }})</span> </td>
+                {% else %}
+                    <td><span class="label label-default">{{ server['hostname'] }} ({{ server['server'] }})</span></td>
+                {% endif %}
+                {% if server['eth0_mac'] %}
+                  <td>{{ server['eth0_mac'] }} </td>
+                {% endif %}
+                {% if server['em1_mac'] %}
+                  <td>{{ server['em1_mac'] }} </td>
+                {% endif %}
+                {% if server['p1p1_mac'] %}
+                  <td>{{ server['p1p1_mac'] }} </td>
+                {% endif %}
+                <td>{{ server['product_name'] }}</td>
+                <td>{{ server['uptime'] }}</td>
+              </tr>
+              {% endfor %}
+            {% endif %}
+        </tbody>
+  <table>
+</div>
+{% endblock %}
+
+{% block head %}
+{{super()}}
+{{fixes.ie8()}}
+{% endblock %}
