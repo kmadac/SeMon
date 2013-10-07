@@ -49,7 +49,7 @@ def deploy():
         sudo('tar xzf /tmp/{0}.tar.gz'.format(appname))
         # now setup the package with our virtual environment's
         # python interpreter
-        sudo('/var/www/{0}/env/bin/python /tmp/{0}/{1}/setup.py install'.format(appname, dist))
+        sudo('cd /tmp/{0}/{1}; /var/www/{0}/env/bin/python setup.py install'.format(appname, dist))
     # now that all is set up, delete the folder again
     sudo('rm -rf /tmp/{0} /tmp/{0}.tar.gz'.format(appname))
     # and finally touch the .wsgi file so that mod_wsgi triggers
