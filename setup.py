@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='SeMon',
-    version='0.1-5-g655883d-131008211151',
+    version='0.1-6-g29db280-131008230022',
     packages=['SeMon', 'Web'],
     package_data={'Web': ['static/*', 'templates/*']},
     scripts=['bin/semond.py'],
