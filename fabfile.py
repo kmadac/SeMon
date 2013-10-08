@@ -6,6 +6,9 @@ import datetime
 env.user = 'kmadac'
 appname = 'SeMon'
 
+SUPERVISOR_DIR = '/etc/supervisor/conf.d/'
+NGINX_DIR = '/etc/nginx/sites-'
+
 
 def pack():
     last_tag = local('git describe --tags', capture=True).strip()
@@ -25,14 +28,21 @@ def pack():
         f.writelines(new_file_lines)
 
     local('python setup.py sdist --formats=gztar', capture=False)
+    local('~/PycharmProjects/VirtualEnvs/{0}/bin/pip freeze > requirements.txt'.format(appname), capture=True)
 
 
 def bootstrap():
-    sudo('aptitude install -y python-pip')
+    with settings(warn_only=True):
+        sudo('mkdir /tmp/{0}'.format(appname))
+
+    sudo('aptitude install -y build-essential python-dev nginx python-pip uwsgi uwsgi-plugin-python supervisor')
     sudo('pip install virtualenv')
     sudo('mkdir -p /var/www/{0}'.format(appname))
     with cd('/var/www/{0}'.format(appname)):
         sudo('virtualenv env --no-site-packages')
+        put('requirements.txt', 'requirements.txt'.format(appname), use_sudo=True)
+        with prefix('source /var/www/{0}/env/bin/activate'.format(appname)):
+            sudo('pip install -r requirements.txt')
 
 
 def deploy():
@@ -55,3 +65,8 @@ def deploy():
     # and finally touch the .wsgi file so that mod_wsgi triggers
     # a reload of the application
     # run('touch /var/www/yourapplication.wsgi')
+    put('fab-files/SeMon.ini', '/etc/uwsgi/apps-available/SeMon.ini', use_sudo=True)
+    with settings(warn_only=True):
+        sudo('ln -s /etc/uwsgi/apps-available/SeMon.ini /etc/uwsgi/apps-enabled/SeMon.ini')
+    put('fab-files/wsgi.py', '/var/www/{0}/wsgi.py'.format(appname), use_sudo=True)
+    sudo('service uwsgi restart')
