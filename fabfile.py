@@ -38,8 +38,10 @@ def bootstrap():
     sudo('aptitude install -y build-essential python-dev nginx python-pip uwsgi uwsgi-plugin-python supervisor')
     sudo('pip install virtualenv')
     sudo('mkdir -p /var/www/{0}'.format(appname))
+    sudo('touch /var/www/{0}/reload'.format(appname))
     with cd('/var/www/{0}'.format(appname)):
         sudo('virtualenv env --no-site-packages')
+    sudo('service uwsgi restart')
 
 
 def deploy():
@@ -70,4 +72,4 @@ def deploy():
     with settings(warn_only=True):
         sudo('ln -s /etc/uwsgi/apps-available/SeMon.ini /etc/uwsgi/apps-enabled/SeMon.ini')
     put('fab-files/wsgi.py', '/var/www/{0}/wsgi.py'.format(appname), use_sudo=True)
-    sudo('service uwsgi restart')
+    sudo('touch /var/www/{0}/reload'.format(appname))
