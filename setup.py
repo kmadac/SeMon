@@ -2,9 +2,10 @@ from distutils.core import setup
 
 setup(
     name='SeMon',
-    version='0.1-1-g73c7f7a-131007221019',
+    version='0.1-5-g655883d-131008211151',
     packages=['SeMon', 'Web'],
     package_data={'Web': ['static/*', 'templates/*']},
+    scripts=['bin/semond.py'],
     url='https://github.com/kmadac/SeMonWeb',
     license='',
     author='Kamil Madac',

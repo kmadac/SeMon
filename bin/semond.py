@@ -1,11 +1,10 @@
+__author__ = 'kmadac'
+
 import time
 import sys
 import os.path
 
-import SeMon
-
-
-__author__ = 'kmadac'
+import SeMon.Data
 
 
 def main():

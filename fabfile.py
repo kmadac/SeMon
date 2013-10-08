@@ -32,11 +32,14 @@ def pack():
 
 
 def bootstrap():
+
+    #install necessary packages
+    sudo('aptitude install -y build-essential python-dev nginx python-pip uwsgi uwsgi-plugin-python supervisor')
+    sudo('pip install virtualenv')
+
     with settings(warn_only=True):
         sudo('mkdir /tmp/{0}'.format(appname))
 
-    sudo('aptitude install -y build-essential python-dev nginx python-pip uwsgi uwsgi-plugin-python supervisor')
-    sudo('pip install virtualenv')
     sudo('mkdir -p /var/www/{0}'.format(appname))
     sudo('touch /var/www/{0}/reload'.format(appname))
     with cd('/var/www/{0}'.format(appname)):

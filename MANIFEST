@@ -6,4 +6,5 @@ SeMon/__init__.py
 Web/SeMonWeb.py
 Web/__init__.py
 Web/templates/servers.html
+bin/semond.py
 test/test_SeMon.py
