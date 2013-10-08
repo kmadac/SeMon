@@ -1,0 +1,7 @@
+        location = /SeMon { rewrite ^ /SeMon/; }
+        location /SeMon { try_files $uri @SeMon; }
+        location @SeMon {
+                include uwsgi_params;
+                uwsgi_param SCRIPT_NAME /SeMon;
+                uwsgi_modifier1 30;
+                uwsgi_pass unix:/tmp/SeMon-uWsgi.sock;

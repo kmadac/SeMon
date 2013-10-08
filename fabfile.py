@@ -1,6 +1,8 @@
 __author__ = 'kmadac'
 from fabric.api import *
 import datetime
+from jinja2 import Template
+import StringIO
 
 # the user to use for the remote commands
 env.user = 'kmadac'
@@ -47,6 +49,21 @@ def bootstrap():
     sudo('service uwsgi restart')
 
 
+def _nginx_configuration():
+    template = StringIO.StringIO()
+    template.write(Template(open('fab-files/nginx.conf.j2').read()).render({'appname': 'SeMon'}))
+    put(template, '/var/www/{0}/nginx.conf'.format(appname), use_sudo=True)
+    sudo('serice nginx reload')
+
+
+def _wsgi_configuration():
+    put('fab-files/SeMon.ini', '/etc/uwsgi/apps-available/SeMon.ini', use_sudo=True)
+    with settings(warn_only=True):
+        sudo('ln -s /etc/uwsgi/apps-available/SeMon.ini /etc/uwsgi/apps-enabled/SeMon.ini')
+    put('fab-files/wsgi.py', '/var/www/{0}/wsgi.py'.format(appname), use_sudo=True)
+    sudo('touch /var/www/{0}/reload'.format(appname))
+
+
 def deploy():
     # figure out the release name and version
     dist = local('python setup.py --fullname', capture=True).strip()
@@ -68,11 +85,6 @@ def deploy():
         sudo('cd /tmp/{0}/{1}; /var/www/{0}/env/bin/python setup.py install'.format(appname, dist))
     # now that all is set up, delete the folder again
     sudo('rm -rf /tmp/{0} /tmp/{0}.tar.gz'.format(appname))
-    # and finally touch the .wsgi file so that mod_wsgi triggers
-    # a reload of the application
-    # run('touch /var/www/yourapplication.wsgi')
-    put('fab-files/SeMon.ini', '/etc/uwsgi/apps-available/SeMon.ini', use_sudo=True)
-    with settings(warn_only=True):
-        sudo('ln -s /etc/uwsgi/apps-available/SeMon.ini /etc/uwsgi/apps-enabled/SeMon.ini')
-    put('fab-files/wsgi.py', '/var/www/{0}/wsgi.py'.format(appname), use_sudo=True)
-    sudo('touch /var/www/{0}/reload'.format(appname))
+
+    _wsgi_configuration()
+    _nginx_configuration()
