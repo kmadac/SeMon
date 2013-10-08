@@ -6,6 +6,7 @@ import yaml
 import datetime
 import copy
 
+
 class Collector(object):
     def __init__(self, servers, path_results='./semon_results.yaml'):
         self.path_results = path_results

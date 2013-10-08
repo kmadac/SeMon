@@ -40,14 +40,15 @@ def bootstrap():
     sudo('mkdir -p /var/www/{0}'.format(appname))
     with cd('/var/www/{0}'.format(appname)):
         sudo('virtualenv env --no-site-packages')
-        put('requirements.txt', 'requirements.txt'.format(appname), use_sudo=True)
-        with prefix('source /var/www/{0}/env/bin/activate'.format(appname)):
-            sudo('pip install -r requirements.txt')
 
 
 def deploy():
     # figure out the release name and version
     dist = local('python setup.py --fullname', capture=True).strip()
+
+    with cd('/var/www/{0}'.format(appname)):
+        put('requirements.txt', 'requirements.txt'.format(appname), use_sudo=True)
+        sudo('/var/www/{0}/env/bin/pip install -r requirements.txt'.format(appname))
 
     # upload the source tarball to the temporary folder on the server
     put('dist/%s.tar.gz' % dist, '/tmp/{0}.tar.gz'.format(appname))
