@@ -1,8 +1,7 @@
-[program:project_name]
-command=/path/to/virtualenv/bin/gunicorn_django -c /path/to/project/gunicorn_conf.py
-directory=/path/to/project/
-user=username
+[program:{{ appname }}]
+command=/var/www/{{ appname }}/env/bin/python /var/www/{{ appname }}/env/bin/semond
+directory=/var/www/{{ appname }}
 autostart=true
 autorestart=true
-priority=991
-stopsignal=KILL
+stderr_logfile=/var/log/{{ appname }}.err.log
+stdout_logfile=/var/log/{{ appname }}.out.log
