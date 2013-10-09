@@ -1,5 +1,6 @@
 [program:{{ appname }}]
-command=/var/www/{{ appname }}/env/bin/python /var/www/{{ appname }}/env/bin/semond.py
+command=/var/www/{{ appname }}/env/bin/python /var/www/{{ appname }}/env/bin/semond.py /tmp/semon_results.yaml
+.yaml
 directory=/var/www/{{ appname }}
 autostart=true
 autorestart=true

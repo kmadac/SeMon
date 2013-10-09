@@ -14,7 +14,7 @@ def main():
             semon.update_results_yaml()
             time.sleep(60)
     else:
-        print "usage: python {0} path_to_reson_file".format(os.path.basename(sys.argv[0]))
+        print "usage: python {0} path_to_reason_file".format(os.path.basename(sys.argv[0]))
 
 if __name__ == "__main__":
     main()

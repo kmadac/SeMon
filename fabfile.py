@@ -66,9 +66,11 @@ def _wsgi_configuration():
 
 def _supervisor_configuration():
     template = StringIO.StringIO()
-    template.write(Template(open('fab-files/supervisor.ini.j2').read()).render({'appname': 'SeMon'}))
-    put(template, '/etc/supervisor/conf.d/{0}d.ini'.format(appname), use_sudo=True)
-    sudo('supervisorctl reload')
+    template.write(Template(open('fab-files/supervisor.conf.j2').read()).render({'appname': 'SeMon'}))
+    put(template, '/etc/supervisor/conf.d/{0}d.conf'.format(appname), use_sudo=True)
+    sudo('supervisorctl reread')
+    sudo('supervisorctl update')
+    sudo('supervisorctl restart {0}'.format(appname))
 
 
 def deploy():
