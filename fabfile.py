@@ -53,7 +53,7 @@ def _nginx_configuration():
     template = StringIO.StringIO()
     template.write(Template(open('fab-files/nginx.conf.j2').read()).render({'appname': 'SeMon'}))
     put(template, '/var/www/{0}/nginx.conf'.format(appname), use_sudo=True)
-    sudo('serice nginx reload')
+    sudo('service nginx reload')
 
 
 def _wsgi_configuration():
@@ -62,6 +62,13 @@ def _wsgi_configuration():
         sudo('ln -s /etc/uwsgi/apps-available/SeMon.ini /etc/uwsgi/apps-enabled/SeMon.ini')
     put('fab-files/wsgi.py', '/var/www/{0}/wsgi.py'.format(appname), use_sudo=True)
     sudo('touch /var/www/{0}/reload'.format(appname))
+
+
+def _supervisor_configuration():
+    template = StringIO.StringIO()
+    template.write(Template(open('fab-files/supervisor.ini.j2').read()).render({'appname': 'SeMon'}))
+    put(template, '/etc/supervisor/conf.d/{0}d.ini'.format(appname), use_sudo=True)
+    sudo('supervisorctl reload')
 
 
 def deploy():
@@ -86,5 +93,6 @@ def deploy():
     # now that all is set up, delete the folder again
     sudo('rm -rf /tmp/{0} /tmp/{0}.tar.gz'.format(appname))
 
+    _supervisor_configuration()
     _wsgi_configuration()
     _nginx_configuration()
